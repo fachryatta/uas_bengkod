@@ -12,16 +12,35 @@ scaler = joblib.load('scaler.pkl')
 feature_columns = joblib.load('X_train_final_columns.pkl')
 feature_stats = joblib.load('feature_stats.pkl')
 
-st.title('Prediksi Churn Pelanggan')
-st.write('Aplikasi ini memprediksi kemungkinan churn pelanggan berdasarkan input yang diberikan.')
+st.set_page_config(
+    page_title="Prediksi Churn Pelanggan",
+    page_icon="📊",
+    layout="wide"
+)
+
+st.title("📊 Prediksi Churn Pelanggan")
+
+st.markdown("""
+### Sistem Prediksi Churn Pelanggan
+
+Aplikasi ini membantu perusahaan **mengidentifikasi pelanggan yang berpotensi berhenti menggunakan layanan (churn)** berdasarkan aktivitas dan interaksi pelanggan menggunakan model **Machine Learning**.
+
+Silakan masukkan informasi pelanggan pada panel sebelah kiri, kemudian tekan tombol **Prediksi Churn**.
+""")
+
+st.divider()
 
 # Collect user input for features (simplified for demonstration)
-st.sidebar.header('Input Fitur Pelanggan')
+st.sidebar.title("📝 Input Data Pelanggan")
+
+st.sidebar.markdown("### 💰 Aktivitas Pelanggan")
 
 def user_input_features():
     # Use loaded feature_stats for slider ranges and default values
     total_spent = st.sidebar.slider('Total Spent', feature_stats['total_spent']['min'], feature_stats['total_spent']['max'], feature_stats['total_spent']['mean'])
+    st.sidebar.markdown("### 😊 Kepuasan Pelanggan")
     satisfaction_score = st.sidebar.slider('Satisfaction Score', feature_stats['satisfaction_score']['min'], feature_stats['satisfaction_score']['max'], feature_stats['satisfaction_score']['mean'])
+    st.sidebar.markdown("### 📞 Interaksi Pelanggan")
     support_tickets = st.sidebar.slider('Support Tickets', feature_stats['support_tickets']['min'], feature_stats['support_tickets']['max'], feature_stats['support_tickets']['mean'])
     pages_per_session = st.sidebar.slider('Pages Per Session', feature_stats['pages_per_session']['min'], feature_stats['pages_per_session']['max'], feature_stats['pages_per_session']['mean'])
     avg_session_time = st.sidebar.slider('Average Session Time', feature_stats['avg_session_time']['min'], feature_stats['avg_session_time']['max'], feature_stats['avg_session_time']['mean'])
@@ -59,18 +78,68 @@ def user_input_features():
 
 input_df_scaled = user_input_features()
 
-st.subheader('Input Pelanggan (Setelah Scaling)')
-st.write(input_df_scaled)
-
 if st.button('Prediksi Churn'):
     prediction = model.predict(input_df_scaled)
     prediction_proba = model.predict_proba(input_df_scaled)
 
-    st.subheader('Hasil Prediksi')
-    if prediction[0] == 1:
-        st.error('Pelanggan ini **cenderung CHURN**.')
-    else:
-        st.success('Pelanggan ini **tidak cenderung CHURN**.')
+    st.divider()
+
+st.header("📈 Hasil Prediksi")
+
+prob = prediction_proba[0][1]
+
+col1, col2 = st.columns(2)
+
+if prediction[0] == 1:
+    status = "Risiko Tinggi"
+else:
+    status = "Risiko Rendah"
+
+col1.metric(
+    "Status Pelanggan",
+    status
+)
+
+col2.metric(
+    "Probabilitas Churn",
+    f"{prob*100:.2f}%"
+)
+
+st.progress(float(prob))
+
+if prediction[0] == 1:
+
+    st.error("🔴 Pelanggan diprediksi memiliki kemungkinan tinggi untuk berhenti menggunakan layanan.")
+
+    st.markdown("""
+### 💡 Rekomendasi
+
+- Berikan promo atau diskon loyalitas.
+- Hubungi pelanggan untuk mengetahui kendala.
+- Tingkatkan kualitas pelayanan.
+- Lakukan monitoring terhadap aktivitas pelanggan.
+""")
+
+else:
+
+    st.success("🟢 Pelanggan diprediksi akan tetap menggunakan layanan.")
+
+    st.markdown("""
+### 💡 Rekomendasi
+
+- Pertahankan kualitas pelayanan.
+- Berikan reward kepada pelanggan loyal.
+- Lakukan monitoring secara berkala.
+""")
     
-    st.write(f"Probabilitas Churn: {prediction_proba[0][1]*100:.2f}%")
-    st.write(f"Probabilitas Tidak Churn: {prediction_proba[0][0]*100:.2f}%")
+st.divider()
+
+st.caption("""
+📌 Model : Voting Classifier
+
+📂 Dataset : Sales & Marketing Customer Dataset
+
+☁️ Deployment : Streamlit Cloud
+
+© UAS Bengkel Koding Data Science
+""")
