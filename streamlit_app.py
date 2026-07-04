@@ -129,7 +129,7 @@ def user_input_features():
         'satisfaction_score': satisfaction_score,
         'support_tickets': support_tickets,
         'pages_per_session': pages_per_session,
-        'avg_session_time': avg_session_time,
+        'average_session_time': average_session_time,
     }
 
     # Create a DataFrame with all 41 feature columns, initialized to 0
