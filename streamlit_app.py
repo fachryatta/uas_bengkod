@@ -44,8 +44,6 @@ st.divider()
 # Collect user input for features (simplified for demonstration)
 st.sidebar.title("📝 Input Data Pelanggan")
 
-st.sidebar.markdown("### 💰 Aktivitas Pelanggan")
-
 def user_input_features():
     # Use loaded feature_stats for slider ranges and default values
     st.sidebar.subheader("💰 Aktivitas Pelanggan")
@@ -58,7 +56,6 @@ def user_input_features():
 )
 
     total_spent = level_map[spent_level]
-    st.sidebar.markdown("### 😊 Kepuasan Pelanggan")
     st.sidebar.subheader("😊 Kepuasan Pelanggan")
 
     satisfaction_level = st.sidebar.select_slider(
@@ -82,7 +79,6 @@ def user_input_features():
     }
 
     satisfaction_score = satisfaction_map[satisfaction_level]
-    st.sidebar.markdown("### 📞 Interaksi Pelanggan")
     st.sidebar.subheader("📞 Interaksi Pelanggan")
 
     support_level = st.sidebar.select_slider(
@@ -121,7 +117,7 @@ def user_input_features():
         help="Semakin tinggi berarti pelanggan lebih lama menggunakan layanan."
     )
 
-    average_session_time = level_map[session_level]
+    avg_session_time = level_map[session_level]
 
     # Create a dictionary for the input for the interactive features
     data_input = {
@@ -129,7 +125,7 @@ def user_input_features():
         'satisfaction_score': satisfaction_score,
         'support_tickets': support_tickets,
         'pages_per_session': pages_per_session,
-        'average_session_time': average_session_time,
+        'avg_session_time': avg_session_time,
     }
 
     # Create a DataFrame with all 41 feature columns, initialized to 0
