@@ -10,6 +10,17 @@ model = joblib.load('final_churn_prediction_model.pkl')
 # Load the scaler, feature columns, and feature statistics
 scaler = joblib.load('scaler.pkl')
 feature_columns = joblib.load('X_train_final_columns.pkl')
+# ===============================
+# Mapping kategori -> nilai scaling
+# ===============================
+
+level_map = {
+    "Sangat Rendah": -2.0,
+    "Rendah": -1.0,
+    "Sedang": 0.0,
+    "Tinggi": 1.0,
+    "Sangat Tinggi": 2.0
+}
 feature_stats = joblib.load('feature_stats.pkl')
 
 st.set_page_config(
@@ -37,13 +48,80 @@ st.sidebar.markdown("### 💰 Aktivitas Pelanggan")
 
 def user_input_features():
     # Use loaded feature_stats for slider ranges and default values
-    total_spent = st.sidebar.slider('Total Spent', feature_stats['total_spent']['min'], feature_stats['total_spent']['max'], feature_stats['total_spent']['mean'])
+    st.sidebar.subheader("💰 Aktivitas Pelanggan")
+
+    spent_level = st.sidebar.select_slider(
+        "Total Pengeluaran",
+        options=list(level_map.keys()),
+        value="Sedang",
+        help="Total pengeluaran pelanggan."
+)
+
+    total_spent = level_map[spent_level]
     st.sidebar.markdown("### 😊 Kepuasan Pelanggan")
-    satisfaction_score = st.sidebar.slider('Satisfaction Score', feature_stats['satisfaction_score']['min'], feature_stats['satisfaction_score']['max'], feature_stats['satisfaction_score']['mean'])
+    st.sidebar.subheader("😊 Kepuasan Pelanggan")
+
+    satisfaction_level = st.sidebar.select_slider(
+        "Tingkat Kepuasan",
+        options=[
+            "Sangat Tidak Puas",
+            "Tidak Puas",
+            "Netral",
+            "Puas",
+            "Sangat Puas"
+        ],
+        value="Netral"
+    )
+
+    satisfaction_map = {
+        "Sangat Tidak Puas": -2,
+        "Tidak Puas": -1,
+        "Netral": 0,
+        "Puas": 1,
+        "Sangat Puas": 2
+    }
+
+    satisfaction_score = satisfaction_map[satisfaction_level]
     st.sidebar.markdown("### 📞 Interaksi Pelanggan")
-    support_tickets = st.sidebar.slider('Support Tickets', feature_stats['support_tickets']['min'], feature_stats['support_tickets']['max'], feature_stats['support_tickets']['mean'])
-    pages_per_session = st.sidebar.slider('Pages Per Session', feature_stats['pages_per_session']['min'], feature_stats['pages_per_session']['max'], feature_stats['pages_per_session']['mean'])
-    avg_session_time = st.sidebar.slider('Average Session Time', feature_stats['avg_session_time']['min'], feature_stats['avg_session_time']['max'], feature_stats['avg_session_time']['mean'])
+    st.sidebar.subheader("📞 Interaksi Pelanggan")
+
+    support_level = st.sidebar.select_slider(
+        "Jumlah Keluhan",
+        options=[
+            "Sangat Sedikit",
+            "Sedikit",
+            "Sedang",
+            "Banyak",
+            "Sangat Banyak"
+        ],
+        value="Sedang"
+    )
+
+    support_map = {
+        "Sangat Sedikit": -2,
+        "Sedikit": -1,
+        "Sedang": 0,
+        "Banyak": 1,
+        "Sangat Banyak": 2
+    }
+
+    support_tickets = support_map[support_level]
+    pages_level = st.sidebar.select_slider(
+        "Halaman yang Dibuka per Sesi",
+        options=list(level_map.keys()),
+        value="Sedang",
+        help="Semakin tinggi berarti pelanggan membuka lebih banyak halaman."
+    )
+
+    pages_per_session = level_map[pages_level]
+    session_level = st.sidebar.select_slider(
+        "Durasi Rata-rata Sesi",
+        options=list(level_map.keys()),
+        value="Sedang",
+        help="Semakin tinggi berarti pelanggan lebih lama menggunakan layanan."
+    )
+
+    average_session_time = level_map[session_level]
 
     # Create a dictionary for the input for the interactive features
     data_input = {
