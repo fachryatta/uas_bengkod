@@ -78,40 +78,35 @@ def user_input_features():
 
 input_df_scaled = user_input_features()
 
-if st.button('Prediksi Churn'):
+if st.button("🔍 Prediksi Churn", use_container_width=True):
+
     prediction = model.predict(input_df_scaled)
     prediction_proba = model.predict_proba(input_df_scaled)
 
     st.divider()
 
-st.header("📈 Hasil Prediksi")
+    st.header("📈 Hasil Prediksi")
 
-prob = prediction_proba[0][1]
+    prob = prediction_proba[0][1]
 
-col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2)
 
-if prediction[0] == 1:
-    status = "Risiko Tinggi"
-else:
-    status = "Risiko Rendah"
+    if prediction[0] == 1:
+        status = "Risiko Tinggi"
+    else:
+        status = "Risiko Rendah"
 
-col1.metric(
-    "Status Pelanggan",
-    status
-)
+    col1.metric("Status Pelanggan", status)
+    col2.metric("Probabilitas Churn", f"{prob*100:.2f}%")
 
-col2.metric(
-    "Probabilitas Churn",
-    f"{prob*100:.2f}%"
-)
+    st.progress(float(prob))
 
-st.progress(float(prob))
+    st.write(f"**Probabilitas Churn:** {prob*100:.2f}%")
 
-if prediction[0] == 1:
+    if prediction[0] == 1:
+        st.error("🔴 Pelanggan diprediksi memiliki kemungkinan tinggi untuk berhenti menggunakan layanan.")
 
-    st.error("🔴 Pelanggan diprediksi memiliki kemungkinan tinggi untuk berhenti menggunakan layanan.")
-
-    st.markdown("""
+        st.markdown("""
 ### 💡 Rekomendasi
 
 - Berikan promo atau diskon loyalitas.
@@ -120,11 +115,10 @@ if prediction[0] == 1:
 - Lakukan monitoring terhadap aktivitas pelanggan.
 """)
 
-else:
+    else:
+        st.success("🟢 Pelanggan diprediksi akan tetap menggunakan layanan.")
 
-    st.success("🟢 Pelanggan diprediksi akan tetap menggunakan layanan.")
-
-    st.markdown("""
+        st.markdown("""
 ### 💡 Rekomendasi
 
 - Pertahankan kualitas pelayanan.
