@@ -203,7 +203,7 @@ if st.button("🔍 Prediksi Churn", use_container_width=True):
 st.divider()
 
 st.caption("""
-📌 Model : Voting Classifier
+📌 Model : Random Forest Classifier
 
 📂 Dataset : Sales & Marketing Customer Dataset
 
